@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doorbell Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body { padding: 50px; background: #eee; text-align: center; }
+        .btn-xl { padding: 20px 40px; font-size: 24px; border-radius: 10px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Doorbell Dashboard</h1>
+        <div id="alert-box" class="alert alert-danger" style="display:none"></div>
+        
+        <div class="card p-4 mt-4 shadow">
+            <h3 id="door-status">Door: Locked (0&deg;)</h3>
+            
+            <div class="mt-4">
+                <button onclick="send('UNLOCK')" class="btn btn-success btn-xl">🔓 UNLOCK (90&deg;)</button>
+                <button onclick="send('LOCK')" class="btn btn-danger btn-xl">🔒 LOCK (0&deg;)</button>
+            </div>
+
+            <hr>
+
+            <div class="mt-2">
+                <button onclick="send('SILENCE')" class="btn btn-secondary">🔇 Silence Bell</button>
+                <button onclick="send('UNSILENCE')" class="btn btn-info">🔊 Enable Sound</button>
+            </div>
+
+            <div class="mt-4">
+                <input type="text" id="lcd-text" class="form-control d-inline-block w-50" placeholder="Message to screen...">
+                <button onclick="sendMsg()" class="btn btn-primary">Send to LCD</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var socket = io();
+        socket.on('mqtt_message', function(msg) {
+            let txt = msg.data;
+            if(txt.includes("RINGING")) showAlert("🔔 Someone is at the door!");
+            if(txt.includes("BURGLAR")) showAlert("⚠️ Motion Detected!");
+            if(txt.includes("UNLOCKED")) document.getElementById("door-status").innerText = "Door: Unlocked (90°)";
+            if(txt.includes("LOCKED")) document.getElementById("door-status").innerText = "Door: Locked (0°)";
+        });
+
+        function send(cmd) {
+            fetch('/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({command: cmd})
+            });
+        }
+
+        function sendMsg() {
+            let txt = document.getElementById("lcd-text").value;
+            if(txt) send("MSG:" + txt);
+        }
+
+        function showAlert(msg) {
+            let div = document.getElementById("alert-box");
+            div.innerText = msg;
+            div.style.display = "block";
+            // Auto hide after 5 seconds
+            setTimeout(() => div.style.display = "none", 5000);
+        }
+    </script>
+</body>
+</html>

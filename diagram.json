@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "author": "Gemini IoT Expert",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": -4.76, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 38.4,
+      "left": -115,
+      "rotate": 180,
+      "attrs": { "color": "red", "label": "Doorbell" }
+    },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir1",
+      "top": -15.2,
+      "left": -218.58,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzz1",
+      "top": -151.2,
+      "left": -7.8,
+      "attrs": { "volume": "0.1" }
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 84.4, "left": 192, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": 35.2,
+      "left": 389.6,
+      "attrs": { "pins": "i2c" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "btn1:2.r", "esp:GND.2", "black", [ "v-48.2", "h211" ] ],
+    [ "btn1:1.r", "esp:12", "green", [ "v0" ] ],
+    [ "pir1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "pir1:VCC", "esp:5V", "red", [ "v144", "h182.25" ] ],
+    [ "pir1:OUT", "esp:14", "purple", [ "v0" ] ],
+    [ "buzz1:2", "esp:GND.2", "black", [ "v76.8", "h66.8" ] ],
+    [ "buzz1:1", "esp:26", "orange", [ "h-38.4", "v182.4" ] ],
+    [ "servo1:GND", "esp:GND.1", "black", [ "h-86.4", "v19.2" ] ],
+    [ "servo1:V+", "esp:5V", "red", [ "h-28.8", "v105.7", "h-163.35" ] ],
+    [ "servo1:PWM", "esp:27", "blue", [ "v0.2", "h-67.2", "v-28.8" ] ],
+    [ "lcd1:GND", "esp:GND.2", "black", [ "h-28.8", "v-48", "h-268.8" ] ],
+    [ "lcd1:VCC", "esp:5V", "red", [ "h-19.2", "v153.7", "h-374.55" ] ],
+    [ "lcd1:SDA", "esp:21", "gray", [ "v0.2", "h-278.4", "v-9.6" ] ],
+    [ "lcd1:SCL", "esp:22", "white", [ "v0.3", "h-259.2", "v-48" ] ]
+  ],
+  "dependencies": {}
+}
